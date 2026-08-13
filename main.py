@@ -6,8 +6,8 @@ from aiogram.types import BotCommand
 from dotenv import load_dotenv
 
 from db.database import init_db
-import common
-import admin
+from handlers import common
+from handlers import admin
 
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")

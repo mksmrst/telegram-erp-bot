@@ -21,10 +21,8 @@
 
 <table align="center">
   <tr>
-    <td align="center"><b>Кнопка старт</b><br>
-        <img src="https://github.com/mksmrst/telegram-erp-bot/blob/main/gif_start-ezgif.com-optimize.gif" width="200"/></td>
     <td align="center"><b>📝 Создание товара</b><br>
-        <img src="https://github.com/mksmrst/telegram-erp-bot/blob/main/gif_add_supp-ezgif.com-optimize.gif" width="200"/></td>
+        <img src="https://github.com/mksmrst/telegram-erp-bot/blob/main/gif_start-ezgif.com-optimize.gif" width="200"/></td>
   </tr>
 </table>
 ---

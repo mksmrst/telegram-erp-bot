@@ -3,7 +3,7 @@ from aiogram import Router, F, types
 from aiogram.filters import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from db.database import get_all_products, get_financial_report
+from db.database import get_all_products, get_financial_report, add_user
 
 router = Router()
 
@@ -24,6 +24,12 @@ def get_main_reply_keyboard(is_admin: bool = False) -> types.ReplyKeyboardMarkup
 async def cmd_start(message: types.Message):
     is_admin = message.from_user.id in ADMIN_IDS
     reply_kb = get_main_reply_keyboard(is_admin)
+
+    user_id = message.from_user.id
+    username = message.from_user.username
+    fullname = message.from_user.full_name
+
+    await add_user(user_id=user_id, username=username, fullname=fullname)
 
     await message.answer(
         "👋 Нажмите <b>«📦 Каталог товаров»</b> для просмотра списка.",

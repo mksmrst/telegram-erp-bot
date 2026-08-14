@@ -32,6 +32,15 @@ async def init_db():
             )
         """)
 
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                user_id INTEGER PRIMARY KEY,
+                username TEXT,
+                fullname TEXT NOT NULL,
+                register_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
         async with db.execute("SELECT MAX(version) FROM schema_migrations") as cursor:
             row = await cursor.fetchone()
             current_version = row[0] if row[0] is not None else 0
@@ -43,19 +52,31 @@ async def init_db():
 
         if current_version < 2:
             await db.execute("""
-                             CREATE TABLE IF NOT EXISTS supplies 
-                             (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                              product_id INTEGER,
-                              quantity INTEGER,
-                              cost_price REAL NOT NULL,
-                              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                              FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE)
-                                 """)
+                CREATE TABLE IF NOT EXISTS supplies (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    product_id INTEGER,
+                    quantity INTEGER,
+                    cost_price REAL NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+                )
+            """)
             await db.execute("INSERT INTO schema_migrations (version) VALUES (2)")
             print("🚀 Применена миграция базы №2: добавлена новая таблица с поставками")
 
         await db.commit()
         print("Database initialized")
+
+
+async def add_user(user_id: int, username: str | None, fullname: str):
+    async with aiosqlite.connect(DB_NAME) as db:
+        await db.execute("""
+            INSERT INTO users (user_id, username, fullname) VALUES (?, ?, ?)
+            ON CONFLICT(user_id) DO UPDATE SET
+                username = excluded.username,
+                fullname = excluded.fullname;
+        """, (user_id, username, fullname))
+        await db.commit()
 
 
 async def get_all_products() -> Iterable[Row]:
@@ -72,7 +93,7 @@ async def get_product_by_id(product_id: int):
             "SELECT id, title, price, cost_price, stock FROM products WHERE id = ?",
             (product_id,)
         ) as cursor:
-            return await cursor.fetchone()  # Возвращаем 1 кортеж с данными товара
+            return await cursor.fetchone()
 
 
 async def delete_product(product_id: int):
@@ -116,7 +137,6 @@ async def update_product_stock(product_id: int, new_stock: int):
             "UPDATE products SET stock = ? WHERE id = ?",
             (new_stock, product_id)
         )
-
         await connect.commit()
 
 
@@ -170,61 +190,42 @@ async def get_financial_report():
                 "total_cost": total_cost_value,
                 "potential_profit": potential_profit
             }
-        
+
+
 async def register_sale(product_id: int):
     async with aiosqlite.connect(DB_NAME) as db:
-        # 1. Достаем данные о самом товаре
         async with db.execute(
             "SELECT title, price, stock FROM products WHERE id = ?",
             (product_id,)
         ) as cursor:
             product = await cursor.fetchone()
             if not product or product[2] <= 0:
-                return None  # Товара нет или склад пуст
+                return None
 
             title, price, stock = product
 
-        # 2. Находим самую старую активную партию (FIFO)
         async with db.execute(
             "SELECT id, cost_price FROM supplies WHERE product_id = ? AND quantity > 0 ORDER BY created_at ASC LIMIT 1",
             (product_id,)
         ) as cursor:
             supply = await cursor.fetchone()
             if not supply:
-                return None  # Поставок с остатком нет
+                return None
 
             supply_id, cost_price = supply
 
-        # 3. Списываем 1 шт. из конкретной партии (по supply_id)
         await db.execute(
             "UPDATE supplies SET quantity = quantity - 1 WHERE id = ?",
             (supply_id,)
         )
 
-        # 4. Уменьшаем общий остаток товара на складе
         new_stock = stock - 1
         await db.execute(
             "UPDATE products SET stock = ? WHERE id = ?",
             (new_stock, product_id)
         )
 
-        # 5. Сохраняем все изменения в базе одним транзакционным коммитом
         await db.commit()
-
-        # 6. Считаем прибыль = (Розничная цена - Закупка конкретно ЭТОЙ партии)
         profit = price - cost_price
 
-        return title, price, profit, new_stock
-
-import os
-
-# Проверяем, есть ли переменная Turso в окружении
-TURSO_URL = os.getenv("TURSO_DATABASE_URL")
-TURSO_TOKEN = os.getenv("TURSO_AUTH_TOKEN")
-
-if TURSO_URL and TURSO_TOKEN:
-    # Этот импорт сработает только на сервере Render (Linux)
-    import libsql_experimental as sqlite
-else:
-    # На твоем ПК в Windows будет работать стандартный aiosqlite
-    import aiosqlite as sqlite
+        return title, price, profit, new_stoc

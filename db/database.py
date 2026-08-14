@@ -228,4 +228,4 @@ async def register_sale(product_id: int):
         await db.commit()
         profit = price - cost_price
 
-        return title, price, profit, new_stoc
+        return title, price, profit, new_stock

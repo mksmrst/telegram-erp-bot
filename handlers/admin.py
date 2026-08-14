@@ -22,7 +22,11 @@ async def cancel_command(message, state: FSMContext):
     await state.clear()
     await message.answer("❌ Добавление товара отменено")
     
-
+@router.callback_query(F.data == "cancel_add_product", StateFilter("*"))
+async def cancel_add_product(callback: CallbackQuery, state: FSMContext):
+await callback.answer()
+await state.clear()
+await callback.message.edit_text("❌ Добавление товара отменено")
 
 
 @router.callback_query(F.data.startswith("prod_"))
@@ -236,8 +240,12 @@ async def cmd_add_product(message: types.Message, state: FSMContext):
 @router.message(AddProductForm.title)
 async def process_title(message: types.Message, state: FSMContext):
     await state.update_data(title=message.text)
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Отмена", callback_data="cancel_add_product")
     await state.set_state(AddProductForm.price)
-    await message.answer("💰 Введите цену продажи товара (в рублях):")
+    await message.answer("💰 Введите цену продажи товара (в рублях):", reply_markup=builder.as_markup())
+    
+    
 
 
 @router.message(AddProductForm.price)

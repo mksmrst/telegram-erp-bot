@@ -17,6 +17,22 @@
   <img src="https://github.com/mksmrst/telegram-erp-bot/blob/main/photo_catalog.jpg" width="320" />
   <img src="https://github.com/mksmrst/telegram-erp-bot/blob/main/photo_fin.jpg" width="320" />
 </p>
+<h3 align="center">🎬 Демонстрация ключевых функций</h3>
+
+<table align="center">
+  <tr>
+    <td align="center"><b>📝 Создание товара</b><br>
+        <img src="assets/create_product.gif" width="200"/></td>
+    <td align="center"><b>💰 Быстрая продажа</b><br>
+        <img src="assets/fast_sale.gif" width="200"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>📦 Поставка партий</b><br>
+        <img src="assets/supply.gif" width="200"/></td>
+    <td align="center"><b>📈 Финансовый отчет</b><br>
+        <img src="assets/report.gif" width="200"/></td>
+  </tr>
+</table>
 ---
 
 ## 🛠 Технологический стек

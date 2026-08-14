@@ -242,8 +242,10 @@ async def cmd_add_product(message: types.Message, state: FSMContext):
 @router.message(AddProductForm.title)
 async def process_title(message: types.Message, state: FSMContext):
     await state.update_data(title=message.text)
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Отмена", callback_data="cancel_add_product")
     await state.set_state(AddProductForm.price)
-    await message.answer("💰 Введите цену продажи товара (в рублях):")
+    await message.answer("💰 Введите цену продажи товара (в рублях):", reply_markup=builder.as_markup())
     
     
 
@@ -260,8 +262,10 @@ async def process_price(message: types.Message, state: FSMContext):
         return
 
     await state.update_data(price=price)
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Отмена", callback_data="cancel_add_product")
     await state.set_state(AddProductForm.cost_price)
-    await message.answer("📉 Введите закупочную цену товара (себестоимость в рублях):")
+    await message.answer("📉 Введите закупочную цену товара (себестоимость в рублях):", reply_markup=builder.as_markup())
 
 
 @router.message(AddProductForm.cost_price)
@@ -276,8 +280,10 @@ async def process_cost_price(message: types.Message, state: FSMContext):
         return
 
     await state.update_data(cost_price=cost_price)
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Отмена", callback_data="cancel_add_product")
     await state.set_state(AddProductForm.stock)
-    await message.answer("📦 Введите количество товара на складе (в шт.):")
+    await message.answer("📦 Введите количество товара на складе (в шт.):", reply_markup=builder.as_markup())
 
 
 @router.message(AddProductForm.stock)
@@ -294,6 +300,8 @@ async def process_stock(message: types.Message, state: FSMContext):
     cost_price = user_data["cost_price"]
 
     await add_product(title, price, cost_price, stock)
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Отмена", callback_data="cancel_add_product")
     await state.clear()
 
     formatted_price = f"{price:,.0f}".replace(",", " ")
@@ -307,6 +315,7 @@ async def process_stock(message: types.Message, state: FSMContext):
         f"📉 <b>Закупка:</b> {formatted_cost} руб.\n"
         f"📊 <b>Остаток:</b> {formatted_stock} шт.\n\n"
         f"Используйте /menu для просмотра каталога.",
+        reply_markup=builder.as_markup(),
         parse_mode="HTML"
     )
 

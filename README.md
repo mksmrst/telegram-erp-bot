@@ -14,8 +14,8 @@
 * Добавление новых товаров в базу.
 * Просмотр финансовой отчетности, чистой прибыли и оценка маржинальности продаж.
 * **Списание партий по модели FIFO:** бот отслеживает конкретные партии товаров, которые поступили в разное время и по разным закупочным ценам, и ведет корректную отчетность в соответствии с закупками в разные промежутки времени.
-<p align="center">
-  <img src="https://github.com/mksmrst/telegram-erp-bot/blob/main/photo_catalog.jpg" width="300" alt="Демонстрация бота" />
+  <img src="https://github.com/mksmrst/telegram-erp-bot/blob/main/photo_catalog.jpg" width="320" />
+  <img src="assets/photo2.png" width="320" />
 </p>
 ---
 

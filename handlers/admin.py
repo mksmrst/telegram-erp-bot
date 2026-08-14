@@ -1,6 +1,6 @@
 # handlers/admin.py
 from aiogram import Router, F, types
-from aiogram.filters import Command
+from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -15,6 +15,18 @@ from handlers.common import back_to_catalog, get_main_reply_keyboard
 router = Router()
 
 ADMIN_IDS = [999583318]
+
+@router.message(F.text == "Отмена", StateFilter('*'))
+@router.message(Command("cancel"), StateFilter('*'))
+async def cancel_command(message, state: FSMContext):
+    await state.clear()
+    await message.answer("❌ Добавление товара отменено")
+    
+@router.callback_query(F.data == "cancel_add_product", StateFilter("*"))
+async def cancel_add_product(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    await state.clear()
+    await callback.message.edit_text("❌ Добавление товара отменено")
 
 
 @router.callback_query(F.data.startswith("prod_"))
@@ -220,16 +232,22 @@ async def cmd_add_product(message: types.Message, state: FSMContext):
     if message.from_user.id not in ADMIN_IDS:
         await message.answer("❌ У вас нет прав для добавления товаров!")
         return
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Отмена", callback_data="cancel_add_product")
 
     await state.set_state(AddProductForm.title)
-    await message.answer("📝 <b>Добавление нового товара</b>\n\nВведите название товара:", parse_mode="HTML")
+    await message.answer("📝 <b>Добавление нового товара</b>\n\nВведите название товара:", reply_markup=builder.as_markup(), parse_mode="HTML")
 
 
 @router.message(AddProductForm.title)
 async def process_title(message: types.Message, state: FSMContext):
     await state.update_data(title=message.text)
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Отмена", callback_data="cancel_add_product")
     await state.set_state(AddProductForm.price)
-    await message.answer("💰 Введите цену продажи товара (в рублях):")
+    await message.answer("💰 Введите цену продажи товара (в рублях):", reply_markup=builder.as_markup())
+    
+    
 
 
 @router.message(AddProductForm.price)
@@ -244,8 +262,10 @@ async def process_price(message: types.Message, state: FSMContext):
         return
 
     await state.update_data(price=price)
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Отмена", callback_data="cancel_add_product")
     await state.set_state(AddProductForm.cost_price)
-    await message.answer("📉 Введите закупочную цену товара (себестоимость в рублях):")
+    await message.answer("📉 Введите закупочную цену товара (себестоимость в рублях):", reply_markup=builder.as_markup())
 
 
 @router.message(AddProductForm.cost_price)
@@ -260,8 +280,10 @@ async def process_cost_price(message: types.Message, state: FSMContext):
         return
 
     await state.update_data(cost_price=cost_price)
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Отмена", callback_data="cancel_add_product")
     await state.set_state(AddProductForm.stock)
-    await message.answer("📦 Введите количество товара на складе (в шт.):")
+    await message.answer("📦 Введите количество товара на складе (в шт.):", reply_markup=builder.as_markup())
 
 
 @router.message(AddProductForm.stock)
@@ -278,6 +300,8 @@ async def process_stock(message: types.Message, state: FSMContext):
     cost_price = user_data["cost_price"]
 
     await add_product(title, price, cost_price, stock)
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Отмена", callback_data="cancel_add_product")
     await state.clear()
 
     formatted_price = f"{price:,.0f}".replace(",", " ")
@@ -291,6 +315,7 @@ async def process_stock(message: types.Message, state: FSMContext):
         f"📉 <b>Закупка:</b> {formatted_cost} руб.\n"
         f"📊 <b>Остаток:</b> {formatted_stock} шт.\n\n"
         f"Используйте /menu для просмотра каталога.",
+        reply_markup=builder.as_markup(),
         parse_mode="HTML"
     )
 

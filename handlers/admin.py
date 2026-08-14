@@ -16,6 +16,14 @@ router = Router()
 
 ADMIN_IDS = [999583318]
 
+@router.message(F.text == "Отмена", StateFilter('*'))
+@router.message(Command("cancel"), StateFilter('*'))
+async def cancel_command(message, state: FSMContext):
+    await state.clear()
+    await message.answer("❌ Добавление товара отменено")
+    
+
+
 
 @router.callback_query(F.data.startswith("prod_"))
 async def process_product_click(callback: types.CallbackQuery):

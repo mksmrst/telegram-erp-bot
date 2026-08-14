@@ -43,11 +43,13 @@
    cd telegram-erp-bot
    
 2. Установить зависимости:
+    ```bash
+    pip install -r requirements.txt
 
-3. pip install -r requirements.txt
-Создать файл .env в корне проекта с токеном бота:
-
-4. BOT_TOKEN=ваш_токен_от_BotFather
-Запустить бота:
-
-5. python main.py
+3. Создать файл .env в корне проекта с токеном бота:
+    ``` bash
+    BOT_TOKEN=ваш_токен_от_BotFather
+   
+4. Запустить бота:
+    ```bash
+    python main.py

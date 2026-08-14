@@ -232,18 +232,18 @@ async def cmd_add_product(message: types.Message, state: FSMContext):
     if message.from_user.id not in ADMIN_IDS:
         await message.answer("❌ У вас нет прав для добавления товаров!")
         return
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Отмена", callback_data="cancel_add_product")
 
     await state.set_state(AddProductForm.title)
-    await message.answer("📝 <b>Добавление нового товара</b>\n\nВведите название товара:", parse_mode="HTML")
+    await message.answer("📝 <b>Добавление нового товара</b>\n\nВведите название товара:", reply_markup=builder.as_markup(), parse_mode="HTML")
 
 
 @router.message(AddProductForm.title)
 async def process_title(message: types.Message, state: FSMContext):
     await state.update_data(title=message.text)
-    builder = InlineKeyboardBuilder()
-    builder.button(text="Отмена", callback_data="cancel_add_product")
     await state.set_state(AddProductForm.price)
-    await message.answer("💰 Введите цену продажи товара (в рублях):", reply_markup=builder.as_markup())
+    await message.answer("💰 Введите цену продажи товара (в рублях):")
     
     
 

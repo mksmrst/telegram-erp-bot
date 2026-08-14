@@ -24,9 +24,9 @@ async def cancel_command(message, state: FSMContext):
     
 @router.callback_query(F.data == "cancel_add_product", StateFilter("*"))
 async def cancel_add_product(callback: CallbackQuery, state: FSMContext):
-await callback.answer()
-await state.clear()
-await callback.message.edit_text("❌ Добавление товара отменено")
+    await callback.answer()
+    await state.clear()
+    await callback.message.edit_text("❌ Добавление товара отменено")
 
 
 @router.callback_query(F.data.startswith("prod_"))

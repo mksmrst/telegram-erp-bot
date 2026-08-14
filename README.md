@@ -22,7 +22,7 @@
 <table align="center">
   <tr>
     <td align="center"><b>📝 Создание товара</b><br>
-        <img src="assets/create_product.gif" width="200"/></td>
+        <img src="https://github.com/mksmrst/telegram-erp-bot/blob/main/gif_start-ezgif.com-optimize.gif" width="200"/></td>
     <td align="center"><b>💰 Быстрая продажа</b><br>
         <img src="assets/fast_sale.gif" width="200"/></td>
   </tr>

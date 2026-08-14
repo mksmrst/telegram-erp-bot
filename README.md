@@ -24,13 +24,7 @@
     <td align="center"><b>📝 Создание товара</b><br>
         <img src="https://github.com/mksmrst/telegram-erp-bot/blob/main/gif_start-ezgif.com-optimize.gif" width="200"/></td>
     <td align="center"><b>💰 Быстрая продажа</b><br>
-        <img src="assets/fast_sale.gif" width="200"/></td>
-  </tr>
-  <tr>
-    <td align="center"><b>📦 Поставка партий</b><br>
-        <img src="assets/supply.gif" width="200"/></td>
-    <td align="center"><b>📈 Финансовый отчет</b><br>
-        <img src="assets/report.gif" width="200"/></td>
+        <img src="https://github.com/mksmrst/telegram-erp-bot/blob/main/gif_start-ezgif.com-optimize.gif" width="200"/></td>
   </tr>
 </table>
 ---

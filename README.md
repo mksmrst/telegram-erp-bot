@@ -9,13 +9,14 @@
 ### 👤 Для пользователей
 * Просмотр каталога товаров.
 * Оформление заказов и покупка товаров в режиме реального времени.
-
+* 
+  <img src="https://github.com/mksmrst/telegram-erp-bot/blob/main/photo_catalog.jpg" width="320" />
+  <img src="https://github.com/mksmrst/telegram-erp-bot/blob/main/photo_fin.jpg" width="320" />
+  
 ### 👑 Для администратора
 * Добавление новых товаров в базу.
 * Просмотр финансовой отчетности, чистой прибыли и оценка маржинальности продаж.
 * **Списание партий по модели FIFO:** бот отслеживает конкретные партии товаров, которые поступили в разное время и по разным закупочным ценам, и ведет корректную отчетность в соответствии с закупками в разные промежутки времени.
-  <img src="https://github.com/mksmrst/telegram-erp-bot/blob/main/photo_catalog.jpg" width="320" />
-  <img src="https://github.com/mksmrst/telegram-erp-bot/blob/main/photo_fin.jpg" width="320" />
 </p>
 <h3 align="center">🎬 Демонстрация ключевых функций</h3>
 
